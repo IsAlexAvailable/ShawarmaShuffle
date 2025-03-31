@@ -1,4 +1,7 @@
 import java.awt.Graphics;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import javax.imageio.ImageIO;
@@ -10,12 +13,11 @@ public class Inventory implements Drawable {
 
     private Character character;
     private BufferedImage emptySlot, highlightedEmptySlot, bananaSlot, highlightedBananaSlot, shawarmaSlot, highlightedShawarmaSlot;
-    private KeyTracker keyTracker;
+    private int activeSlotIndex = 0;
 
-    public Inventory(Character c, KeyTracker keyTracker) {
+    public Inventory(Character c) {
         character = c;
         initImages();
-        this.keyTracker = keyTracker;
         for (int i = 0; i < 10; i++) {
             itemArr[i] = null;
         }
@@ -61,11 +63,11 @@ public class Inventory implements Drawable {
      *  @return if an item was dropped
      */
 
-    public boolean dropItem(int index) {
-        if (itemArr[index] == null) { return false; }
-        Collectable droppedItem = itemArr[index];
+    public boolean dropActiveItem() {
+        if (itemArr[activeSlotIndex] == null) { return false; }
+        Collectable droppedItem = itemArr[activeSlotIndex];
         itemSet.remove(droppedItem);
-        itemArr[index] = null;
+        itemArr[activeSlotIndex] = null;
         droppedItem.setInInventory(false);
         droppedItem.updatePosition(character.getX1(), character.getY1());
         return true;
@@ -96,9 +98,9 @@ public class Inventory implements Drawable {
      */
 
     public void drawHotbarSlot(BufferedImage slot, BufferedImage highlightedSlot, int index, Graphics g) {
-        int tileSize = MainPanel.TRUETILESIZE;
-        int hotbarY = MainPanel.SCREENHEIGHT-tileSize*2+32, hotbarX = tileSize*3;
-        if (keyTracker.typedNum == index) { g.drawImage(highlightedSlot, hotbarX+tileSize*index, hotbarY, tileSize, tileSize, null); }
+        int tileSize = Constants.TRUETILESIZE;
+        int hotbarY = Constants.SCREENHEIGHT-tileSize*2+32, hotbarX = tileSize*3;
+        if (activeSlotIndex == index) { g.drawImage(highlightedSlot, hotbarX+tileSize*index, hotbarY, tileSize, tileSize, null); }
         else { g.drawImage(slot, hotbarX+tileSize*index, hotbarY, tileSize, tileSize, null); }
     }
 
@@ -115,5 +117,33 @@ public class Inventory implements Drawable {
             shawarmaSlot = ImageIO.read(getClass().getResourceAsStream("/sprites/shawarma_slot_t.png"));
             highlightedShawarmaSlot = ImageIO.read(getClass().getResourceAsStream("/sprites/select_shawarma_slot_t.png"));
         } catch (IOException e) {}
+    }
+
+    public void setActiveSlotIndex(int newActiveSlotIndex) {
+        activeSlotIndex = newActiveSlotIndex;
+    }
+
+    KeyListener keyListener = new InventoryKeyListener();
+    public KeyListener getKeyListener() {
+        return keyListener;
+    }
+
+    class InventoryKeyListener extends KeyAdapter {
+        @Override
+        public void keyTyped(KeyEvent e) {
+            switch (e.getKeyChar()) {  //  records typed numbers so hotbar selection can be updated accordingly 
+                case '1': setActiveSlotIndex(0); break;
+                case '2': setActiveSlotIndex(1); break;
+                case '3': setActiveSlotIndex(2); break;
+                case '4': setActiveSlotIndex(3); break;
+                case '5': setActiveSlotIndex(4); break;
+                case '6': setActiveSlotIndex(5); break;
+                case '7': setActiveSlotIndex(6); break;
+                case '8': setActiveSlotIndex(7); break;
+                case '9': setActiveSlotIndex(8); break;
+                case '0': setActiveSlotIndex(9); break;
+                default:  break; //  non-num key typed 
+            }
+        }
     }
 }

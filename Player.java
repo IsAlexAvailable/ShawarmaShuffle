@@ -1,16 +1,16 @@
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import javax.imageio.ImageIO;
 
 public class Player extends Character {
-    private KeyTracker keyTracker;
     private BufferedImage crouch;
     boolean collision;
     protected static BufferedImage playerIdle;
 
-    public Player(KeyTracker keyTracker) {
-        this.keyTracker = keyTracker;
-        inventory = new Inventory(this, keyTracker);
+    public Player() {
+        inventory = new Inventory(this);
         initPositionValues();
         initImages();
         currImage = idle;
@@ -25,9 +25,9 @@ public class Player extends Character {
      */
 
     public void initPositionValues() {
-        posX1 = (int)(((MainPanel.MAXCOLUMNS/2)-0.5) * tileSize);  //  player starts at center window
-        posY1 = (int)(((MainPanel.MAXROWS/2)-0.5) * tileSize);
-        deltaPosition = 6 * MainPanel.SCALE;
+        posX1 = (int)(((Constants.MAXCOLUMNS/2)-0.5) * tileSize);  //  player starts at center window
+        posY1 = (int)(((Constants.MAXROWS/2)-0.5) * tileSize);
+        deltaPosition = 6 * Constants.SCALE;
         deltaPositionDiag = (int) (deltaPosition/Math.sqrt(2));
         radius = tileSize;
         centerX = posX1 + tileSize/2;
@@ -52,14 +52,14 @@ public class Player extends Character {
      */
 
     public void updateDirection() {
-        if (keyTracker.leftPressed && keyTracker.upPressed)         { direction = Direction.NORTHWEST; }
-        else if (keyTracker.leftPressed && keyTracker.downPressed)  { direction = Direction.SOUTHWEST; }
-        else if (keyTracker.rightPressed && keyTracker.upPressed)   { direction = Direction.NORTHEAST; }
-        else if (keyTracker.rightPressed && keyTracker.downPressed) { direction = Direction.SOUTHEAST; }
-        else if (keyTracker.leftPressed)                            { direction = Direction.LEFT; }
-        else if (keyTracker.rightPressed)                           { direction = Direction.RIGHT; }
-        else if (keyTracker.upPressed)                              { direction = Direction.UP; }
-        else if (keyTracker.downPressed)                            { direction = Direction.DOWN; }
+        if (keyListener.leftPressed && keyListener.upPressed)         { direction = Direction.NORTHWEST; }
+        else if (keyListener.leftPressed && keyListener.downPressed)  { direction = Direction.SOUTHWEST; }
+        else if (keyListener.rightPressed && keyListener.upPressed)   { direction = Direction.NORTHEAST; }
+        else if (keyListener.rightPressed && keyListener.downPressed) { direction = Direction.SOUTHEAST; }
+        else if (keyListener.leftPressed)                            { direction = Direction.LEFT; }
+        else if (keyListener.rightPressed)                           { direction = Direction.RIGHT; }
+        else if (keyListener.upPressed)                              { direction = Direction.UP; }
+        else if (keyListener.downPressed)                            { direction = Direction.DOWN; }
         else                                                        { direction = Direction.IDLE; }
     }
     
@@ -69,7 +69,7 @@ public class Player extends Character {
 
     @Override
     public void updateImage() {
-        if (keyTracker.shiftPressed) { currImage = crouch; }
+        if (keyListener.shiftPressed) { currImage = crouch; }
         else { super.updateImage(); }
     }
 
@@ -93,12 +93,12 @@ public class Player extends Character {
 
     @Override
     public void updateInventory() {
-        if (keyTracker.eTyped) { 
+        if (keyListener.eTyped) { 
             for (Collectable c : MainPanel.collectables) {
                 if (c.hasCollision(this) && !c.inInventory) { c.inInventory = inventory.addItem(c); break; }
             }
         }
-        if (keyTracker.qTyped) { inventory.dropItem(keyTracker.typedNum); }
+        if (keyListener.qTyped) { inventory.dropActiveItem(); }
     }
 
     /*
@@ -135,4 +135,74 @@ public class Player extends Character {
     @Override   public int getCenterX() { return centerX; }
     @Override   public int getCenterY() { return centerY; }
     @Override   public Direction getDirection() { return direction; }
-    @Override   public int getRadius() { return radius; }}
+    @Override   public int getRadius() { return radius; }
+
+    PlayerKeyListener keyListener = new PlayerKeyListener();
+    public KeyListener getKeyListener() {
+        return keyListener;
+    }
+
+    public void stopMoving() {
+        keyListener.leftPressed = false;
+        keyListener.rightPressed = false;
+        keyListener.upPressed = false;
+        keyListener.downPressed = false;    
+    }
+
+    class PlayerKeyListener implements KeyListener {
+        private int keyCode;
+        private char keyChar;
+        protected boolean leftPressed, rightPressed, upPressed, downPressed, shiftPressed;
+        protected boolean eTyped, qTyped;
+        
+        /*
+         *  primarily sets booleans corresponding to player movement key actions (wasd and arrows) as well as
+         *  shift and escape which correspond to crouching and pausing the game
+         */
+    
+        @Override
+        public void keyPressed(KeyEvent e) {
+            keyCode = e.getKeyCode();
+            keyChar = e.getKeyChar();
+    
+            if (keyCode == KeyEvent.VK_LEFT || keyChar == 'a') { leftPressed = true; }
+            if (keyCode == KeyEvent.VK_RIGHT || keyChar == 'd') { rightPressed = true; }
+            if (keyCode == KeyEvent.VK_UP || keyChar == 'w') { upPressed = true; }
+            if (keyCode == KeyEvent.VK_DOWN || keyChar == 's') { downPressed = true; }
+            if (keyCode == KeyEvent.VK_SHIFT) {
+                shiftPressed = true;
+                stopMoving();
+            }
+        }
+    
+        /*
+         *  performs the opposite operation as keyPressed method
+         */
+    
+        @Override
+        public void keyReleased(KeyEvent e) {
+            keyCode = e.getKeyCode();
+            keyChar = e.getKeyChar();
+    
+            if (keyCode == KeyEvent.VK_LEFT || keyChar == 'a') { leftPressed = false; }
+            if (keyCode == KeyEvent.VK_RIGHT || keyChar == 'd') { rightPressed = false; }
+            if (keyCode == KeyEvent.VK_UP || keyChar == 'w') { upPressed = false; }
+            if (keyCode == KeyEvent.VK_DOWN || keyChar == 's') { downPressed = false; }
+            if (keyCode == KeyEvent.VK_SHIFT) { shiftPressed = false; }
+            if (keyChar == 'e') { eTyped = false; }
+            if (keyChar == 'q') { qTyped = false; }
+        }
+    
+        /*
+         *  calls methods to update typed key booleans corresponding to item pickup/drop and hotbar slot selection
+         */
+    
+        @Override
+        public void keyTyped(KeyEvent e) {
+            switch (e.getKeyChar()) {
+                case 'e': eTyped = true; break;
+                case 'q': qTyped = true; break;
+            }
+        }
+    }
+}

@@ -7,8 +7,8 @@ public class NPC extends Character {
     private int roll;
     boolean collision;
 
-    public NPC(int x, int y, int displace, KeyTracker keyTracker) {
-        inventory = new Inventory(this, keyTracker);
+    public NPC(int x, int y, int displace) {
+        inventory = new Inventory(this);
         initPositionValues(x, y, displace);
         direction = Direction.IDLE;
         initImages();
@@ -25,7 +25,7 @@ public class NPC extends Character {
     public void initPositionValues(int x, int y, int displace) {
         posX1 = x;
         posY1 = y;
-        deltaPosition = displace * MainPanel.SCALE;
+        deltaPosition = displace * Constants.SCALE;
         deltaPositionDiag = (int) (deltaPosition/Math.sqrt(2));
         radius = tileSize;
         centerX = posX1 + tileSize/2;
