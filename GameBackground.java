@@ -6,8 +6,8 @@ import javax.imageio.ImageIO;
 public class GameBackground extends Entity {
     private BufferedImage[][] tileArray;
     private BufferedImage backgroundTile;
-    private int columns = MainPanel.MAXCOLUMNS;
-    private int rows = MainPanel.MAXROWS;
+    private int columns = Constants.MAXCOLUMNS;
+    private int rows = Constants.MAXROWS;
     
     public GameBackground() {
         tileArray = new BufferedImage[columns][rows];
