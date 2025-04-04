@@ -8,6 +8,7 @@ public class Player extends Character {
     private BufferedImage crouch;
     boolean collision;
     protected static BufferedImage playerIdle;
+    private boolean canMove, movingLeft, movingRight, movingUp, movingDown, crouching, typedE, typedQ;
 
     public Player() {
         inventory = new Inventory(this);
@@ -15,6 +16,7 @@ public class Player extends Character {
         initImages();
         currImage = idle;
         direction = Direction.IDLE;
+        canMove = true;
     }
 
     /*
@@ -27,7 +29,7 @@ public class Player extends Character {
     public void initPositionValues() {
         posX1 = (int)(((Constants.MAXCOLUMNS/2)-0.5) * tileSize);  //  player starts at center window
         posY1 = (int)(((Constants.MAXROWS/2)-0.5) * tileSize);
-        deltaPosition = 6 * Constants.SCALE;
+        deltaPosition = 200 * Constants.SCALE/Constants.FPS;
         deltaPositionDiag = (int) (deltaPosition/Math.sqrt(2));
         radius = tileSize;
         centerX = posX1 + tileSize/2;
@@ -45,6 +47,7 @@ public class Player extends Character {
         updateImage();
         updatePosition();
         updateInventory();
+        resetInteractionKeys();
     }
 
     /*
@@ -52,15 +55,16 @@ public class Player extends Character {
      */
 
     public void updateDirection() {
-        if (keyListener.leftPressed && keyListener.upPressed)         { direction = Direction.NORTHWEST; }
-        else if (keyListener.leftPressed && keyListener.downPressed)  { direction = Direction.SOUTHWEST; }
-        else if (keyListener.rightPressed && keyListener.upPressed)   { direction = Direction.NORTHEAST; }
-        else if (keyListener.rightPressed && keyListener.downPressed) { direction = Direction.SOUTHEAST; }
-        else if (keyListener.leftPressed)                            { direction = Direction.LEFT; }
-        else if (keyListener.rightPressed)                           { direction = Direction.RIGHT; }
-        else if (keyListener.upPressed)                              { direction = Direction.UP; }
-        else if (keyListener.downPressed)                            { direction = Direction.DOWN; }
-        else                                                        { direction = Direction.IDLE; }
+        if      (movingLeft && movingUp)    { direction = Direction.NORTHWEST; }
+        else if (movingLeft && movingDown)  { direction = Direction.SOUTHWEST; }
+        else if (movingRight && movingUp)   { direction = Direction.NORTHEAST; }
+        else if (movingRight && movingDown) { direction = Direction.SOUTHEAST; }
+        else if (movingLeft)                { direction = Direction.LEFT; }
+        else if (movingRight)               { direction = Direction.RIGHT; }
+        else if (movingUp)                  { direction = Direction.UP; }
+        else if (movingDown)                { direction = Direction.DOWN; }
+        else                                { direction = Direction.IDLE; }
+        // if (!canMove) { direction = Direction.IDLE; }
     }
     
     /*
@@ -69,7 +73,7 @@ public class Player extends Character {
 
     @Override
     public void updateImage() {
-        if (keyListener.shiftPressed) { currImage = crouch; }
+        if (crouching) { currImage = crouch; }
         else { super.updateImage(); }
     }
 
@@ -93,12 +97,15 @@ public class Player extends Character {
 
     @Override
     public void updateInventory() {
-        if (keyListener.eTyped) { 
-            for (Collectable c : MainPanel.collectables) {
-                if (c.hasCollision(this) && !c.inInventory) { c.inInventory = inventory.addItem(c); break; }
+        if (typedE) { 
+            for (Collectable c : GamePanel.collectables) {
+                if (c.hasCollision(this) && !c.inInventory) { 
+                    c.inInventory = inventory.addItem(c);
+                    break;
+                }
             }
         }
-        if (keyListener.qTyped) { inventory.dropActiveItem(); }
+        if (typedQ) { inventory.dropActiveItem(); }
     }
 
     /*
@@ -122,38 +129,57 @@ public class Player extends Character {
         } catch (IOException e) {}
     }
 
-    /*
-     *  various getter methods mainly used by other classes to operate based on player positioning or modify inventory
-     */
-
-    @Override   public Inventory getInventory() { return inventory; }
-    @Override   public int getDelta() { return deltaPosition; }
-    @Override   public int getDeltaDiag() { return deltaPositionDiag; }
-    @Override   public int getX1() { return posX1; }
-    @Override   public int getY1() { return posY1; }
-    @Override   public int getY3() { return posY1 + tileSize; }
-    @Override   public int getCenterX() { return centerX; }
-    @Override   public int getCenterY() { return centerY; }
-    @Override   public Direction getDirection() { return direction; }
-    @Override   public int getRadius() { return radius; }
-
-    PlayerKeyListener keyListener = new PlayerKeyListener();
-    public KeyListener getKeyListener() {
-        return keyListener;
+    public void setCanMove(boolean b) {
+        // this.canMove = b;
+        if (!b) {
+            setMovingLeft(false);
+            setMovingRight(false);
+            setMovingUp(false);
+            setMovingDown(false);
+        }
     }
 
-    public void stopMoving() {
-        keyListener.leftPressed = false;
-        keyListener.rightPressed = false;
-        keyListener.upPressed = false;
-        keyListener.downPressed = false;    
+    public void setMovingLeft(boolean movingLeft) {
+        this.movingLeft = movingLeft;
+    }
+    public void setMovingRight(boolean movingRight) {
+        this.movingRight = movingRight;
+    }
+    public void setMovingUp(boolean movingUp) {
+        this.movingUp = movingUp;
+    }
+    public void setMovingDown(boolean movingDown) {
+        this.movingDown = movingDown;
+    }
+
+    public void setCrouching(boolean crouching) {
+        this.crouching = crouching;
+    }
+
+    public void setTypedE(boolean isTypedE) {
+        this.typedE = isTypedE;
+    }
+
+    public void setTypedQ(boolean isTypedQ) {
+        this.typedQ = isTypedQ;
+    }
+
+    public void resetInteractionKeys() {    //  after typing an interaction key and updating interactions we reset typed so it doesn't act as pressed
+        typedE = false;
+        typedQ = false;
+    }
+
+    PlayerKeyListener keyListener = new PlayerKeyListener();
+
+    public KeyListener getKeyListener() {
+        return keyListener;
     }
 
     class PlayerKeyListener implements KeyListener {
         private int keyCode;
         private char keyChar;
-        protected boolean leftPressed, rightPressed, upPressed, downPressed, shiftPressed;
-        protected boolean eTyped, qTyped;
+        protected boolean isLeftPressed, isRightPressed, isUpPressed, isDownPressed, isShiftPressed;
+        protected boolean isTypedE, isTypedQ;
         
         /*
          *  primarily sets booleans corresponding to player movement key actions (wasd and arrows) as well as
@@ -164,14 +190,27 @@ public class Player extends Character {
         public void keyPressed(KeyEvent e) {
             keyCode = e.getKeyCode();
             keyChar = e.getKeyChar();
-    
-            if (keyCode == KeyEvent.VK_LEFT || keyChar == 'a') { leftPressed = true; }
-            if (keyCode == KeyEvent.VK_RIGHT || keyChar == 'd') { rightPressed = true; }
-            if (keyCode == KeyEvent.VK_UP || keyChar == 'w') { upPressed = true; }
-            if (keyCode == KeyEvent.VK_DOWN || keyChar == 's') { downPressed = true; }
+
+            if (keyCode == KeyEvent.VK_LEFT || keyChar == 'a') { 
+                isLeftPressed = true;
+                setMovingLeft(isLeftPressed);
+            }
+            if (keyCode == KeyEvent.VK_RIGHT || keyChar == 'd') { 
+                isRightPressed = true;
+                setMovingRight(isRightPressed);
+            }
+            if (keyCode == KeyEvent.VK_UP || keyChar == 'w') { 
+                isUpPressed = true;
+                setMovingUp(isUpPressed);
+            }
+            if (keyCode == KeyEvent.VK_DOWN || keyChar == 's') { 
+                isDownPressed = true;
+                setMovingDown(isDownPressed);
+            }
             if (keyCode == KeyEvent.VK_SHIFT) {
-                shiftPressed = true;
-                stopMoving();
+                isShiftPressed = true;
+                setCrouching(isShiftPressed);
+                setCanMove(false);
             }
         }
     
@@ -184,13 +223,35 @@ public class Player extends Character {
             keyCode = e.getKeyCode();
             keyChar = e.getKeyChar();
     
-            if (keyCode == KeyEvent.VK_LEFT || keyChar == 'a') { leftPressed = false; }
-            if (keyCode == KeyEvent.VK_RIGHT || keyChar == 'd') { rightPressed = false; }
-            if (keyCode == KeyEvent.VK_UP || keyChar == 'w') { upPressed = false; }
-            if (keyCode == KeyEvent.VK_DOWN || keyChar == 's') { downPressed = false; }
-            if (keyCode == KeyEvent.VK_SHIFT) { shiftPressed = false; }
-            if (keyChar == 'e') { eTyped = false; }
-            if (keyChar == 'q') { qTyped = false; }
+            if (keyCode == KeyEvent.VK_LEFT || keyChar == 'a') { 
+                isLeftPressed = false;
+                setMovingLeft(isLeftPressed);
+            }
+            if (keyCode == KeyEvent.VK_RIGHT || keyChar == 'd') { 
+                isRightPressed = false;
+                setMovingRight(isRightPressed); 
+            }
+            if (keyCode == KeyEvent.VK_UP || keyChar == 'w') { 
+                isUpPressed = false;
+                setMovingUp(isUpPressed); 
+            }
+            if (keyCode == KeyEvent.VK_DOWN || keyChar == 's') { 
+                isDownPressed = false;
+                setMovingDown(isDownPressed);
+            }
+            if (keyCode == KeyEvent.VK_SHIFT) { 
+                isShiftPressed = false;
+                setCrouching(isShiftPressed);
+                setCanMove(true);
+            }
+            if (keyChar == 'e') { 
+                isTypedE = false;
+                setTypedE(isTypedE);
+            }
+            if (keyChar == 'q') { 
+                isTypedQ = false;
+                setTypedQ(isTypedQ);
+            }
         }
     
         /*
@@ -200,9 +261,30 @@ public class Player extends Character {
         @Override
         public void keyTyped(KeyEvent e) {
             switch (e.getKeyChar()) {
-                case 'e': eTyped = true; break;
-                case 'q': qTyped = true; break;
+                case 'e': 
+                    isTypedE = true; 
+                    setTypedE(isTypedE);
+                    break;
+                case 'q': 
+                    isTypedQ = true; 
+                    setTypedQ(isTypedQ);
+                    break;
             }
         }
     }
+
+     /*
+     *  various getter methods mainly used by other classes to operate based on player positioning or modify inventory
+     */
+
+     @Override   public Inventory getInventory() { return inventory; }
+     @Override   public int getDelta() { return deltaPosition; }
+     @Override   public int getDeltaDiag() { return deltaPositionDiag; }
+     @Override   public int getX1() { return posX1; }
+     @Override   public int getY1() { return posY1; }
+     @Override   public int getY3() { return posY1 + tileSize; }
+     @Override   public int getCenterX() { return centerX; }
+     @Override   public int getCenterY() { return centerY; }
+     @Override   public Direction getDirection() { return direction; }
+     @Override   public int getRadius() { return radius; }
 }

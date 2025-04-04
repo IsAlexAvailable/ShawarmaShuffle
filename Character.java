@@ -81,7 +81,7 @@ public abstract class Character extends Entity {
      */
 
     public boolean testObstacleCollisions() {
-        for (Entity e : MainPanel.obstacles) { 
+        for (Entity e : GamePanel.obstacles) { 
             if (e.hasCollision(this)) { return true; } 
         }
         return false;

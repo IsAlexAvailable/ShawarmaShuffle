@@ -1,5 +1,5 @@
 public abstract class Entity implements Drawable {
-    protected int tileSize = Constants.TRUETILESIZE, screenWidth = Constants.SCREENWIDTH, screenHeight = Constants.SCREENHEIGHT;
+    protected int tileSize = Constants.SCALEDTILESIZE, screenWidth = Constants.SCREENWIDTH, screenHeight = Constants.SCREENHEIGHT;
     protected int posX1, posY1;
 
     public abstract boolean hasCollision(Character c);

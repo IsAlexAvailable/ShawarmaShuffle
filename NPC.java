@@ -25,7 +25,7 @@ public class NPC extends Character {
     public void initPositionValues(int x, int y, int displace) {
         posX1 = x;
         posY1 = y;
-        deltaPosition = displace * Constants.SCALE;
+        deltaPosition = displace * Constants.SCALE/Constants.FPS;
         deltaPositionDiag = (int) (deltaPosition/Math.sqrt(2));
         radius = tileSize;
         centerX = posX1 + tileSize/2;

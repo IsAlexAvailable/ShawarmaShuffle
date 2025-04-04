@@ -41,17 +41,22 @@ public class Inventory implements Drawable {
      */
 
     public boolean addItem(Collectable c) {
-        if (!containsItem(c) && itemSet.size() < 10) {   //  only add item to inventory if not duplicate and inventory not full
-            itemSet.add(c);
-            for (int i = 0; i < itemArr.length; i++) {  //  find first available empty slot
-                if (itemArr[i] == null) { itemArr[i] = c; break; }
-            }
-            c.setInInventory(true);
-            return true;    //  item was added
+        if (containsItem(c) || itemSet.size() >= 10) {  //  only add item to inventory if not duplicate and inventory not full
+            return false;
+        }
+        itemSet.add(c);
+        if (itemArr[activeSlotIndex] == null) { //  if selected slot empty, then put item here, otherwise put at first occurence of empty slot
+            itemArr[activeSlotIndex] = c;
         }
         else {
-            return false;   //  item was not added
+            for (int i = 0; i < itemArr.length; i++) {  //  find first available empty slot
+                if (itemArr[i] == null) { 
+                    itemArr[i] = c; break;
+                }
+            }
         }
+        c.setInInventory(true);
+        return true;    //  item was added
     }
 
     /*
@@ -98,7 +103,7 @@ public class Inventory implements Drawable {
      */
 
     public void drawHotbarSlot(BufferedImage slot, BufferedImage highlightedSlot, int index, Graphics g) {
-        int tileSize = Constants.TRUETILESIZE;
+        int tileSize = Constants.SCALEDTILESIZE;
         int hotbarY = Constants.SCREENHEIGHT-tileSize*2+32, hotbarX = tileSize*3;
         if (activeSlotIndex == index) { g.drawImage(highlightedSlot, hotbarX+tileSize*index, hotbarY, tileSize, tileSize, null); }
         else { g.drawImage(slot, hotbarX+tileSize*index, hotbarY, tileSize, tileSize, null); }
