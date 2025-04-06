@@ -1,12 +1,6 @@
 public abstract class Planter extends Furniture {
-    protected int posX2, posY3;
-
+    protected int posX2, posY2;
+    
     @Override
-    public int getX1() { return posX1; }
-    @Override
-    public int getY1() { return posY1; }
-    @Override
-    public int getX2() { return posX2; }
-    @Override
-    public int getY3() { return posY3; }
+    public int getY2() { return posY2; }
 }

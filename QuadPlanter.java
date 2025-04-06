@@ -12,21 +12,15 @@ public class QuadPlanter extends Planter {
         width = tileSize*4;
         height = tileSize*2;
         posX2 = posX1 + width;
-        posY3 = posY1 + height;
+        posY2 = posY1 + height;
+        hitbox = new Hitbox(posX1, posY1, 8, tileSize, width-8, tileSize);
         initImages();
     }
-
-    @Override
-    public int getY1() { return posY1 + tileSize; }
-
-    @Override
-    public int getX1() { return posX1 + 16; }
 
     /*
      *  draws the quad planter beginning from its original position, for every tile
      *  it occupies. The width and height of each section is one true tile size
      */
-    
     @Override
     public void draw(Graphics g) {
         g.drawImage(plantA, posX1,              posY1, tileSize, tileSize,null); //  top left image
@@ -37,12 +31,12 @@ public class QuadPlanter extends Planter {
         g.drawImage(plantE, posX1 + tileSize,   posY1 + tileSize, tileSize, tileSize,null);  //  bottom middle image
         g.drawImage(plantE, posX1 + tileSize*2, posY1 + tileSize, tileSize, tileSize,null);  //  bottom middle image
         g.drawImage(plantF, posX1 + tileSize*3, posY1 + tileSize, tileSize, tileSize,null);  //  bottom right image
+        super.draw(g);
     }
 
     /*
      *  initializes QuadPlanter images, importing from sprites folder
      */
-
     @Override
     public void initImages() {
         try {

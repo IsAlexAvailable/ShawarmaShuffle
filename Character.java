@@ -7,6 +7,7 @@ public abstract class Character extends Entity {
     protected Inventory inventory;
     protected int deltaPosition, deltaPositionDiag, radius, centerX, centerY;
     protected MovementState direction;
+    protected Hitbox hitbox;
 
     private long timeElapsed = 0, startTime = 0, period = 500, lowTime = period/2;
     public static final int CLOCK_LOW = 1, CLOCK_HIGH = 2, CLOCK_IDLE = -1;
@@ -15,7 +16,6 @@ public abstract class Character extends Entity {
      *  used in character movement animation by returning a periodic clock value, determined in live time
      *  @return gives the current clock value, either HIGH/LOW
      */
-
     public int getClockSignal() {   //  returns 1 during low period, 2 during high period; used to cycle through character motion sprites
         timeElapsed = System.currentTimeMillis() - startTime;
         if (timeElapsed < lowTime) { return CLOCK_LOW; }
@@ -31,7 +31,6 @@ public abstract class Character extends Entity {
      *  displaces the character from their current position given the direction they're facing and delta distance values.
      *  Additionally updates their center coordinates
      */
-
     public void updatePosition() {
         switch (direction) {
             case NORTHWEST: posX1 -= deltaPositionDiag; posY1 -= deltaPositionDiag; break;
@@ -44,15 +43,16 @@ public abstract class Character extends Entity {
             case DOWN: posY1 += deltaPosition; break;
             default: break; //  CHARACTER IS IDLE SO NO CHANGE
         }
-        centerX = getX1() + tileSize/2;
-        centerY = getY1() + tileSize/2;
+        centerX = posX1 + tileSize/2;
+        centerY = posY1 + tileSize/2;
     }
     
+    public abstract void updateHitbox();
+
     /*
      *  updates the character's current image depending on their current direction.
      *  Note this switch uses an updated syntax style to include multiple conditions
      */
-
     public void updateImage() {
         switch (direction) {
             case IDLE -> { currImage = idle; break; }
@@ -69,7 +69,6 @@ public abstract class Character extends Entity {
      *  @param  imageA  sets current image to this if clock is HIGH
      *  @param  imageB  sets current image to this if clock is LOW
      */
-
     public void pickBetweenImages(BufferedImage imageA, BufferedImage imageB) {
         int currSignal = getClockSignal();
         if (currSignal == CLOCK_HIGH) { currImage = imageA; }
@@ -80,7 +79,6 @@ public abstract class Character extends Entity {
      *  runs through all obstacles to determine if the character collides with an obstacle
      *  @return if a collision occurs
      */
-
     public boolean testObstacleCollisions() {
         for (Entity e : GamePanel.obstacles) { 
             if (e.hasCollision(this)) { return true; } 
@@ -92,14 +90,17 @@ public abstract class Character extends Entity {
      *  draws the character at their current position, using the current character image.
      *  Their width and height values are the same as true tile (post-scaling) dimensions
      */
-
     @Override
     public void draw(Graphics g) { 
         g.drawImage(currImage, posX1, posY1, tileSize, tileSize, null);
-        g.setColor(Color.RED);  //  tilebox
-        g.drawRect(posX1+16, posY1+32, tileSize-32, tileSize-32);
+        hitbox.setColor(Color.RED);
+        hitbox.draw(g);
     }
 
+    public int getX1() { return posX1; }
+    public int getY1() { return posY1; }
+    @Override public int getY2() { return posY1 + tileSize; }
+    public Hitbox getHitbox() { return hitbox; }
     public abstract int getCenterX();
     public abstract int getCenterY();
     public abstract int getDelta();

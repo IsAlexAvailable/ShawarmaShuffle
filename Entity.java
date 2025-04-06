@@ -4,7 +4,5 @@ public abstract class Entity implements Drawable {
 
     public abstract boolean hasCollision(Character c);
     public abstract void initImages();
-    public abstract int getX1();
-    public abstract int getY1();
-    public abstract int getY3();
+    public abstract int getY2();
 }

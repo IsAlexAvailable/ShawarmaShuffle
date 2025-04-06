@@ -10,8 +10,9 @@ public class NPC extends Character {
     public NPC(int x, int y, int displace) {
         inventory = new Inventory(this);
         initPositionValues(x, y, displace);
-        direction = MovementState.IDLE;
         initImages();
+        hitbox = new Hitbox(posX1, posY1, 16, 32, tileSize-32, tileSize-32);
+        direction = MovementState.IDLE;
         currImage = idle;
     }
 
@@ -21,7 +22,6 @@ public class NPC extends Character {
      *  @param  y   sets the default y position
      *  @param  speed   sets the NPC's delta distance
      */
-
     public void initPositionValues(int x, int y, int displace) {
         posX1 = x;
         posY1 = y;
@@ -35,12 +35,12 @@ public class NPC extends Character {
     /*
      *  updating NPC consists of updating their position, then image. In the future NPC will also have an inventory
      */
-
     @Override
     public void update() {
         // updateDirection();
         updateImage();
         updatePosition();
+        updateHitbox();
         // updateInventory();
     }
     
@@ -49,7 +49,6 @@ public class NPC extends Character {
      *  collide, their direction is updated depending on their current direction. Otherwise they may change
      *  their direction by chance.
      */
-
     @Override
     public void updatePosition() {
         collision = testObstacleCollisions();
@@ -70,6 +69,11 @@ public class NPC extends Character {
         // }
     }
 
+    @Override
+    public void updateHitbox() {
+        hitbox.updatePosition(posX1, posY1);
+    }
+
     // public void updateDirection() {
     //     if (shouldChangeDirection()) { updateDirection(0, 9); }
     // }
@@ -80,7 +84,6 @@ public class NPC extends Character {
      *  @param  lower   determines the upper (exclusive) index limit
      *  @param  upper   determines the lower (inclusive) index limit
      */
-
     public void updateDirection(int lower, int upper) {
         roll = randGenerator.nextInt(lower, upper);
         direction = MovementState.directions[roll];
@@ -103,7 +106,6 @@ public class NPC extends Character {
     /*
      *  initializes NPC images, importing from sprites folder
      */
-
     @Override
     public void initImages() {
         try {
@@ -122,7 +124,6 @@ public class NPC extends Character {
     /*
      *  getter methods serving similar purpose to those in Player
      */
-
     @Override public int getCenterX() { return centerX; }
     @Override public int getCenterY() { return centerY; }
     @Override public int getDelta() { return deltaPosition; }
@@ -130,7 +131,4 @@ public class NPC extends Character {
     @Override public MovementState getDirection() { return direction; }
     @Override public Inventory getInventory() { return inventory; }
     @Override public int getRadius() { return radius; }
-    @Override public int getX1() { return posX1; }
-    @Override public int getY1() { return posY1; }
-    @Override public int getY3() { return posY1 + tileSize; }
 }

@@ -51,6 +51,7 @@ public class GamePanel extends JPanel {
     private BufferedImage controlsImage;
     private ShawarmaShuffle game;
 
+    private boolean showHitboxes;
 
     public GamePanel(ShawarmaShuffle mainGame) {
         game = mainGame;
@@ -81,6 +82,7 @@ public class GamePanel extends JPanel {
         initEntitiesList();
 
         shouldDrawInfoBox = false;
+        showHitboxes = game.getShowHitboxes();
     }
 
     /*
@@ -89,7 +91,6 @@ public class GamePanel extends JPanel {
      *  and collectable is updated, which may include updating positions and directions, making collision checks, and handling collectable
      *  interactions.
      */
-
      public void update() {    //  update object positions
         for (Character c : characters) { c.update(); }
         for (Collectable c : collectables) { c.update(player1); }
@@ -101,7 +102,6 @@ public class GamePanel extends JPanel {
      *  Info button has a tool tip that displays a text prompt when hovering over button; it is
      *  also configured to remove the default button border and focus outline
      */
-
     public void initInfoButton() {
         infoButton = new JButton();
         infoButton.setIcon(new ImageIcon(infoButtonImage));
@@ -126,7 +126,6 @@ public class GamePanel extends JPanel {
      *  adds 'obstacles' to the obstacles list. An obstacle is an object that prevents character movement, i.e. 
      *  tables, planters, background.
      */
-
     public void initObstaclesCollection() { //  adds all obstacles to collection
         obstacles = new LinkedList<Entity>();
         obstacles.add(background); obstacles.add(table1); obstacles.add(table2); obstacles.add(table3);
@@ -139,7 +138,6 @@ public class GamePanel extends JPanel {
      *  adds 'collectables' to the collectables set. A collectable is an object that a character may pick up/drop out
      *  of their inventory, i.e. banana and shawarma
      */
-
     public void initCollectablesCollection() {
         collectables = new HashSet<Collectable>();
         collectables.add(banana1); collectables.add(banana2); collectables.add(shawarma1); collectables.add(shawarma2);
@@ -150,7 +148,6 @@ public class GamePanel extends JPanel {
     /*
      *  adds 'characters' to characters list. A  character is a player/NPC
      */
-
     public void initCharactersCollection() {
         characters = new LinkedList<Character>();
         characters.add(npc1); characters.add(npc2); characters.add(npc3); characters.add(npc4); characters.add(player1);
@@ -160,19 +157,16 @@ public class GamePanel extends JPanel {
      *  adds 'entities' to entity list. An entity is an object that must be drawn in a specific order
      *  according to other entities' y-values (although "background" is an entity, its drawing order does not depend on other entities)
      */
-
     public void initEntitiesList() {
         entities = new LinkedList<Entity>();
         for (Entity e : obstacles) { entities.add(e); }
         for (Collectable c : collectables) { entities.add(c); }
         for (Character c : characters) { entities.add(c); }
-        entities.remove(background);
     }
 
     /*
      *  draws the pause screen or in-game screen depending on game pause status
      */
-
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
@@ -188,10 +182,8 @@ public class GamePanel extends JPanel {
      *  as it is underneath all other drawn objects. Lastly, the player's hotbar is drawn.
      *  
      */
-
     public void drawCurrLevel(Graphics g) {
         Collections.sort(entities, new EntityComparator()); //  sort all entities to determine layering by y coord
-        background.draw(g); //  draw background
         for (Entity e : entities) { 
             if (e instanceof Collectable) {
                 Collectable c = (Collectable) e;
@@ -210,7 +202,6 @@ public class GamePanel extends JPanel {
     /*
      *  initializes button images, importing them from sprites folder
      */
-
     public void getButtonImages() {
         try {
             infoButtonImage = ImageIO.read(getClass().getResourceAsStream("/sprites/info_button.png"));

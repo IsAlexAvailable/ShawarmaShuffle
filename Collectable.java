@@ -11,7 +11,6 @@ public abstract class Collectable extends Entity {
      *  @param  x   sets the default x position
      *  @param  y   sets the default y position
      */
-
     public void initPositionValues(int x, int y) {
         posX1 = x;
         posY1 = y;
@@ -25,7 +24,6 @@ public abstract class Collectable extends Entity {
      *  @param  c   character for collision test
      *  @return whether the distance between is within the sum of the radii
      */
-
     @Override
     public boolean hasCollision(Character c) {
         int sumRadii = (int) (Math.pow(radius + c.getRadius()-180, 2));    //  distance for radii to touch (squared) due to following modification
@@ -38,14 +36,12 @@ public abstract class Collectable extends Entity {
      *  @param  character   character whose inventory will be tested
      *  @return whether collectable is in inventory
      */
-
     public boolean inInventory(Character character) { return character.getInventory().containsItem(this); }
 
     /*
      *  draws the collectable at its current position, centered on the character who drops it,
      *  using the current collectable image. Its width and height are each half of the true tile size
      */
-
     @Override
     public void draw(Graphics g) {
         g.drawImage(currImage, centerX, centerY, width, height, null);
@@ -57,7 +53,6 @@ public abstract class Collectable extends Entity {
      *  @param  x   new collectable x coordinate
      *  @param  y   new collectable y coordinate 
      */
-
     public void updatePosition(int x, int y) {
         posX1 = x;
         posY1 = y;
@@ -71,19 +66,13 @@ public abstract class Collectable extends Entity {
      *  @param  idleImage   if no collision, collectable has its idle image
      *  @param  collectImage    if collision, collectable has its collectable image (highlighted in blue)
      */
-
     public void updateImage(Character c, BufferedImage idleImage, BufferedImage collectImage) {
         if (hasCollision(c)) { currImage = collectImage; }
         else { currImage = idleImage; }
     }
 
     @Override
-    public int getY3() { return posY1 + height; }
+    public int getY2() { return posY1 + height; }
 
     public void setInInventory(boolean b) { inInventory = b; }
-    @Override
-    public int getX1() { throw new UnsupportedOperationException("Unimplemented method 'getX'"); }
-    @Override
-    public int getY1() { throw new UnsupportedOperationException("Unimplemented method 'getY'"); }
-
 }

@@ -16,7 +16,6 @@ public class Shawarma extends Collectable {
      *  updating Shawarma consists of updating its position and subsequent image
      *  @param  c   image should be updated accordingly if provided character is within reach (has a collision)
      */
-
     @Override
     public void update(Character c) {
         updateImage(c, idleShawarma, collectShawarma);
@@ -25,7 +24,6 @@ public class Shawarma extends Collectable {
     /*
      *  initializes Shawarma images, importing from sprites folder
      */
-
     @Override
     public void initImages() {
         try {

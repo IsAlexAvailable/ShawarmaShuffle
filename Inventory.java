@@ -28,7 +28,6 @@ public class Inventory implements Drawable {
      *  @param  c   the collectable teseted against the inventory set
      *  @return if the collectable is in the inventory
      */
-
     public boolean containsItem(Collectable c) { return itemSet.contains(c); } 
 
     /*
@@ -39,7 +38,6 @@ public class Inventory implements Drawable {
      *  @param  c   the added collectable
      *  @return if the item was added
      */
-
     public boolean addItem(Collectable c) {
         if (containsItem(c) || itemSet.size() >= 10) {  //  only add item to inventory if not duplicate and inventory not full
             return false;
@@ -67,7 +65,6 @@ public class Inventory implements Drawable {
      *  @param  index   
      *  @return if an item was dropped
      */
-
     public boolean dropActiveItem() {
         if (itemArr[activeSlotIndex] == null) { return false; }
         Collectable droppedItem = itemArr[activeSlotIndex];
@@ -83,7 +80,6 @@ public class Inventory implements Drawable {
      *  item, or lack thereof, to draw, then calls a method which determines the specific image to draw based on
      *  the hotbar's selection status
      */
-
     @Override
     public void draw(Graphics g) {
         
@@ -101,7 +97,6 @@ public class Inventory implements Drawable {
      *  @param  highlightedSlot 
      *  @param  index
      */
-
     public void drawHotbarSlot(BufferedImage slot, BufferedImage highlightedSlot, int index, Graphics g) {
         int tileSize = Constants.SCALEDTILESIZE;
         int hotbarY = Constants.SCREENHEIGHT-tileSize*2+32, hotbarX = tileSize*3;
@@ -112,7 +107,6 @@ public class Inventory implements Drawable {
     /*
      *  initializes Inventory slot images, importing from sprites folder
      */
-
     public void initImages() {
         try {
             emptySlot = ImageIO.read(getClass().getResourceAsStream("/sprites/empty_slot_t.png"));

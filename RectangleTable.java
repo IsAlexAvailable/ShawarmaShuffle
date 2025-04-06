@@ -12,7 +12,8 @@ public class RectangleTable extends Table {
         width = tileSize*2;
         height = tileSize;
         posX2 = posX1 + width;
-        posY3 = posY1 + height;
+        posY2 = posY1 + height;
+        hitbox = new Hitbox(posX1, posY1, 8, 8, width-12, height-8);
         initImages();
     }
 
@@ -20,17 +21,17 @@ public class RectangleTable extends Table {
      *  draws the rectangle table which takes up the tile at its original position and one tile to the right. 
      *  The width and height of each section is one true tile size
      */
-
     @Override
     public void draw(Graphics g) {
         g.drawImage(rectangleTableA, posX1, posY1, tileSize, tileSize,null);
         g.drawImage(rectangleTableB, posX1 + tileSize, posY1, tileSize, tileSize,null);
+        super.draw(g);
     }
 
     /*
      *  initializes RectangleTable images, importing from sprites folder
      */
-
+    
     @Override
     public void initImages() {
         try {

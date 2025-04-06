@@ -5,7 +5,8 @@ public class ShawarmaShuffle extends JFrame {
     private GamePanel gamePanel;
     private PausePanel pausePanel;
     private CardLayout cardLayout;
-    private static boolean gamePaused;
+    private boolean gamePaused;
+    private boolean showHitboxes = false;
 
     public ShawarmaShuffle() {
         gamePaused = true;
@@ -20,7 +21,6 @@ public class ShawarmaShuffle extends JFrame {
      *  allows program to exit upon window close, packs the window to conform to its components properties,
      *  centers window on screen
      */
-
     public void initWindow() {
         cardLayout = new CardLayout();
         getContentPane().setLayout(cardLayout);
@@ -40,7 +40,6 @@ public class ShawarmaShuffle extends JFrame {
      *  If the cycle is completed before the end of a period, the program sleeps the remaining time. Every cycle, the game 
      *  calls update() and repaint() to update various object properties and paint them accordingly.
      */
-
      public void runGameLoop() {
         double repaintInterval = 1000000000/Constants.FPS; //  how many nanoseconds each frame takes at 24fps
         double nextInterval = System.nanoTime() + repaintInterval;  //  next interval occurs at curr time + interval
@@ -75,8 +74,17 @@ public class ShawarmaShuffle extends JFrame {
         gamePaused = true;
     }
 
+    public void showHitboxes(boolean b) {
+        showHitboxes = b;
+    }
+
+    public boolean getShowHitboxes() {
+        return showHitboxes;
+    }
+
     public static void main(String[] args) {
         ShawarmaShuffle game = new ShawarmaShuffle();
+        game.showHitboxes(true);    //  TODO: implement show hitbox switch
         game.runGameLoop();
     }
 }

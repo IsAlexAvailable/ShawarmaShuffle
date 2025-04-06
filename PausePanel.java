@@ -78,6 +78,7 @@ public class PausePanel extends JPanel {
     @Override
     public void paintComponent(Graphics g) {
         //  paints the pause screen
+        super.paintComponent(g);
         g.drawRect(50, 50, 100, 100);   //  dummy test
     }
 }

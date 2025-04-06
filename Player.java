@@ -1,3 +1,4 @@
+import java.awt.Graphics;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
@@ -6,16 +7,17 @@ import javax.imageio.ImageIO;
 
 public class Player extends Character {
     private BufferedImage crouch;
-    boolean collision;
+    boolean hasCollision;
     protected static BufferedImage playerIdle;
-    private boolean canMove, movingLeft, movingRight, movingUp, movingDown, crouching, tryItemPickUp, tryItemDrop;
+    private boolean canMove, movingLeft, movingRight, movingUp, movingDown, isCrouching, tryItemPickUp, tryItemDrop;
 
     public Player() {
         inventory = new Inventory(this);
         initPositionValues();
         initImages();
-        currImage = idle;
+        hitbox = new Hitbox(posX1, posY1, 16, 32, tileSize-32, tileSize-32);
         direction = MovementState.IDLE;
+        currImage = idle;
         canMove = true;
     }
 
@@ -25,7 +27,6 @@ public class Player extends Character {
      *  regular delta distance. These values are used in many places and define the player's movement and reach
      *  when picking up collectables
      */
-
     public void initPositionValues() {
         posX1 = (int)(((Constants.MAXCOLUMNS/2)-0.5) * tileSize);  //  player starts at center window
         posY1 = (int)(((Constants.MAXROWS/2)-0.5) * tileSize);
@@ -40,12 +41,12 @@ public class Player extends Character {
      *  updating the player consists of updating the direction they face and subsequently the player image used,
      *  the player's coordinates, and their inventory
      */
-
     @Override
     public void update() {
         updateDirection();
         updateImage();
         updatePosition();
+        updateHitbox();
         updateInventory();
         resetInteractionKeys();
     }
@@ -53,7 +54,6 @@ public class Player extends Character {
     /*
      *  the player's direction is updated based on the combination of keys pressed. Directions correspond to enums
      */
-
     public void updateDirection() {
         if      (canMove && movingLeft && movingUp)    { direction = MovementState.NORTHWEST; }
         else if (canMove && movingLeft && movingDown)  { direction = MovementState.SOUTHWEST; }
@@ -69,11 +69,16 @@ public class Player extends Character {
     /*
      *  unless the player is crouched (shift pressed), their image is determined by character's image update method
      */
-
     @Override
     public void updateImage() {
-        if (crouching) { currImage = crouch; }
+        if (isCrouching) { currImage = crouch; }
         else { super.updateImage(); }
+    }
+
+    @Override
+    public void draw(Graphics g) {
+        super.draw(g);
+        hitbox.draw(g);
     }
 
     /*
@@ -81,11 +86,15 @@ public class Player extends Character {
      *  Character's test obstacle collisions runs through all obstacles to see if this occurs, if not, the 
      *  player's position is successfully updated.
      */
-
     @Override
     public void updatePosition() {
-        collision = testObstacleCollisions();
-        if (!collision) { super.updatePosition(); }
+        hasCollision = testObstacleCollisions();
+        if (!hasCollision) { super.updatePosition(); }
+    }
+
+    @Override
+    public void updateHitbox() {
+        hitbox.updatePosition(posX1, posY1);
     }
 
     /*
@@ -93,7 +102,6 @@ public class Player extends Character {
      *  i.e. they collide. If the player attempts to drop an item, call the inventory drop method, passing the current hotbar
      *  key selected.
      */
-
     @Override
     public void updateInventory() {
         if (tryItemPickUp) { 
@@ -110,7 +118,6 @@ public class Player extends Character {
     /*
      *  initializes player images, importing from sprites folder
      */
-
     @Override
     public void initImages() {  //  read in all of the player sprites
         try {
@@ -137,7 +144,7 @@ public class Player extends Character {
         movingRight = false;
         movingDown = false;
         movingUp = false;
-        crouching = false;
+        isCrouching = false;
     }
 
     public void resetInteractionKeys() {    //  after typing an interaction key and updating interactions we reset typed so it doesn't act as pressed
@@ -161,7 +168,6 @@ public class Player extends Character {
          *  primarily sets booleans corresponding to player movement key actions (wasd and arrows) as well as
          *  shift and escape which correspond to crouching and pausing the game
          */
-    
         @Override
         public void keyPressed(KeyEvent e) {
             keyCode = e.getKeyCode();
@@ -185,15 +191,14 @@ public class Player extends Character {
             }
             if (keyCode == KeyEvent.VK_SHIFT) {
                 isShiftPressed = true;
-                crouching = isShiftPressed;
-                canMove(!crouching);
+                isCrouching = isShiftPressed;
+                canMove(!isCrouching);
             }
         }
     
         /*
          *  performs the opposite operation as keyPressed method
          */
-    
         @Override
         public void keyReleased(KeyEvent e) {
             keyCode = e.getKeyCode();
@@ -217,8 +222,8 @@ public class Player extends Character {
             }
             if (keyCode == KeyEvent.VK_SHIFT) { 
                 isShiftPressed = false;
-                crouching = isShiftPressed;
-                canMove(!crouching);
+                isCrouching = isShiftPressed;
+                canMove(!isCrouching);
             }
             if (keyChar == 'e') { 
                 isTypedE = false;
@@ -233,7 +238,6 @@ public class Player extends Character {
         /*
          *  calls methods to update typed key booleans corresponding to item pickup/drop and hotbar slot selection
          */
-    
         @Override
         public void keyTyped(KeyEvent e) {
             switch (e.getKeyChar()) {
@@ -252,13 +256,9 @@ public class Player extends Character {
      /*
      *  various getter methods mainly used by other classes to operate based on player positioning or modify inventory
      */
-
      @Override   public Inventory getInventory() { return inventory; }
      @Override   public int getDelta() { return deltaPosition; }
      @Override   public int getDeltaDiag() { return deltaPositionDiag; }
-     @Override   public int getX1() { return posX1; }
-     @Override   public int getY1() { return posY1; }
-     @Override   public int getY3() { return posY1 + tileSize; }
      @Override   public int getCenterX() { return centerX; }
      @Override   public int getCenterY() { return centerY; }
      @Override   public MovementState getDirection() { return direction; }

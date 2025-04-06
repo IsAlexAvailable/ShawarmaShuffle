@@ -17,7 +17,6 @@ public class GameBackground extends Entity {
     /*
      *  initializes GameBackground image, importing from sprites folder
      */
-
     @Override
     public void initImages() {
         try {
@@ -29,7 +28,6 @@ public class GameBackground extends Entity {
      *  draws the background. Runs through a tile array, which represents the tiles that fit on-screen, and draws
      *  the tile at each position
      */
-
     @Override
     public void draw(Graphics g) {
         for (int x = 0; x < tileArray.length; x++) {
@@ -43,32 +41,27 @@ public class GameBackground extends Entity {
      *  @param  c   the character tested against the background boundaries
      *  @return if the character collides with out-of-bound coordinates
      */
-
     @Override
     public boolean hasCollision(Character c) {
-        int characterX = c.getX1()+16, characterY = c.getY1();
-        int characterX2 = c.getX1() -16, characterY3 = c.getY1();
+        int characterX1 = c.getHitbox().getX1(), characterY1 = c.getHitbox().getY1();
+        int characterX2 = c.getHitbox().getX2(), characterY2 = c.getHitbox().getY2();
         MovementState characterDirection = c.getDirection();
         int characterDelta = c.getDelta();
         int characterDeltaDiag = c.getDeltaDiag();
 
         switch (characterDirection) {
-            case LEFT: return (characterX - characterDelta) < 0;
-            case RIGHT: return (characterX2 + characterDelta) > (screenWidth - tileSize);
-            case UP: return (characterY - characterDelta) < 0;
-            case DOWN: return (characterY3 + characterDelta) > (screenHeight - tileSize);
-            case NORTHEAST: return (characterY - characterDeltaDiag) < 0 || ((characterX2 + characterDeltaDiag) > (screenWidth - tileSize));
-            case NORTHWEST: return (characterY - characterDeltaDiag) < 0 || (characterX - characterDeltaDiag) < 0;
-            case SOUTHEAST: return ((characterY3 + characterDeltaDiag) > (screenHeight - tileSize)) || (characterX2 + characterDeltaDiag) > (screenWidth - tileSize);
-            case SOUTHWEST: return ((characterY3 + characterDeltaDiag) > (screenHeight - tileSize)) || (characterX - characterDeltaDiag) < 0;
+            case LEFT: return (characterX1 - characterDelta) < 0;
+            case RIGHT: return (characterX2 + characterDelta) > (screenWidth);
+            case UP: return (characterY1 - characterDelta) < 0;
+            case DOWN: return (characterY2 + characterDelta) > (screenHeight);
+            case NORTHEAST: return (characterY1 - characterDeltaDiag) < 0 || ((characterX2 + characterDeltaDiag) > (screenWidth));
+            case NORTHWEST: return (characterY1 - characterDeltaDiag) < 0 || (characterX1 - characterDeltaDiag) < 0;
+            case SOUTHEAST: return ((characterY2 + characterDeltaDiag) > (screenHeight)) || (characterX2 + characterDeltaDiag) > (screenWidth);
+            case SOUTHWEST: return ((characterY2 + characterDeltaDiag) > (screenHeight)) || (characterX1 - characterDeltaDiag) < 0;
             default: return false;  //  SHOULD NOT HAPPEN
         }
     }
 
     @Override
-    public int getX1() { throw new UnsupportedOperationException("Unimplemented method 'getX'"); }
-    @Override
-    public int getY1() { throw new UnsupportedOperationException("Unimplemented method 'getY'"); }
-    @Override
-    public int getY3(){ throw new UnsupportedOperationException("Unimplemented method 'getY3'"); }
+    public int getY2(){ return -50; }
 }
