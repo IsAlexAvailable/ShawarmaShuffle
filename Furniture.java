@@ -113,8 +113,10 @@ public abstract class Furniture extends Entity {
 
     @Override
     public void draw(Graphics g) {
-        hitbox.setColor(Color.GREEN);
-        hitbox.draw(g);
+        if (GlobalSettings.getInstance().isShowHitboxes()) {
+            hitbox.setColor(Color.GREEN);
+            hitbox.draw(g);
+        }
     }
 
     public void updateHitbox() {

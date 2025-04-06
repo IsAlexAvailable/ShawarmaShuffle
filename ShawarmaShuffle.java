@@ -74,17 +74,9 @@ public class ShawarmaShuffle extends JFrame {
         gamePaused = true;
     }
 
-    public void showHitboxes(boolean b) {
-        showHitboxes = b;
-    }
-
-    public boolean getShowHitboxes() {
-        return showHitboxes;
-    }
-
     public static void main(String[] args) {
         ShawarmaShuffle game = new ShawarmaShuffle();
-        game.showHitboxes(true);    //  TODO: implement show hitbox switch
+        GlobalSettings.getInstance().setShowHitboxes(false);
         game.runGameLoop();
     }
 }

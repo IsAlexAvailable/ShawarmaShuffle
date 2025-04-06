@@ -51,8 +51,6 @@ public class GamePanel extends JPanel {
     private BufferedImage controlsImage;
     private ShawarmaShuffle game;
 
-    private boolean showHitboxes;
-
     public GamePanel(ShawarmaShuffle mainGame) {
         game = mainGame;
         this.setPreferredSize(new Dimension(Constants.SCREENWIDTH, Constants.SCREENHEIGHT));    //  sets this panel size
@@ -82,7 +80,6 @@ public class GamePanel extends JPanel {
         initEntitiesList();
 
         shouldDrawInfoBox = false;
-        showHitboxes = game.getShowHitboxes();
     }
 
     /*

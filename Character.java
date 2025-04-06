@@ -93,8 +93,10 @@ public abstract class Character extends Entity {
     @Override
     public void draw(Graphics g) { 
         g.drawImage(currImage, posX1, posY1, tileSize, tileSize, null);
-        hitbox.setColor(Color.RED);
-        hitbox.draw(g);
+        if (GlobalSettings.getInstance().isShowHitboxes()) {
+            hitbox.setColor(Color.RED);
+            hitbox.draw(g);
+        }
     }
 
     public int getX1() { return posX1; }

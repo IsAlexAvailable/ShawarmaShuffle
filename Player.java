@@ -75,12 +75,6 @@ public class Player extends Character {
         else { super.updateImage(); }
     }
 
-    @Override
-    public void draw(Graphics g) {
-        super.draw(g);
-        hitbox.draw(g);
-    }
-
     /*
      *  a player's future position is dependent on whether they experience a collision with an obstacle. 
      *  Character's test obstacle collisions runs through all obstacles to see if this occurs, if not, the 
