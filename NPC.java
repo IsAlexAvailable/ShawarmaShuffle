@@ -10,7 +10,7 @@ public class NPC extends Character {
     public NPC(int x, int y, int displace) {
         inventory = new Inventory(this);
         initPositionValues(x, y, displace);
-        direction = Direction.IDLE;
+        direction = MovementState.IDLE;
         initImages();
         currImage = idle;
     }
@@ -54,8 +54,8 @@ public class NPC extends Character {
     public void updatePosition() {
         collision = testObstacleCollisions();
         if (collision) {
-            if (direction == Direction.DOWN || direction == Direction.UP) { updateDirection(0, 2); }
-            else if (direction == Direction.LEFT || direction == Direction.RIGHT) { updateDirection(2, 4); }
+            if (direction == MovementState.DOWN || direction == MovementState.UP) { updateDirection(0, 2); }
+            else if (direction == MovementState.LEFT || direction == MovementState.RIGHT) { updateDirection(2, 4); }
             else { updateDirection(0, 9); }
         }
         else {
@@ -83,7 +83,7 @@ public class NPC extends Character {
 
     public void updateDirection(int lower, int upper) {
         roll = randGenerator.nextInt(lower, upper);
-        direction = Direction.directions[roll];
+        direction = MovementState.directions[roll];
     }
 
     /*
@@ -127,7 +127,7 @@ public class NPC extends Character {
     @Override public int getCenterY() { return centerY; }
     @Override public int getDelta() { return deltaPosition; }
     @Override public int getDeltaDiag() { return deltaPositionDiag; }
-    @Override public Direction getDirection() { return direction; }
+    @Override public MovementState getDirection() { return direction; }
     @Override public Inventory getInventory() { return inventory; }
     @Override public int getRadius() { return radius; }
     @Override public int getX1() { return posX1; }

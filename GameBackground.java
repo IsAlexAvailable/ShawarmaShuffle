@@ -46,20 +46,21 @@ public class GameBackground extends Entity {
 
     @Override
     public boolean hasCollision(Character c) {
-        int characterX = c.getX1(), characterY = c.getY1();
-        Direction characterDirection = c.getDirection();
+        int characterX = c.getX1()+16, characterY = c.getY1();
+        int characterX2 = c.getX1() -16, characterY3 = c.getY1();
+        MovementState characterDirection = c.getDirection();
         int characterDelta = c.getDelta();
         int characterDeltaDiag = c.getDeltaDiag();
 
         switch (characterDirection) {
-            case Direction.LEFT: return (characterX - characterDelta) <= 0;
-            case Direction.RIGHT: return (characterX + characterDelta) >= (screenWidth - tileSize);
-            case Direction.UP: return (characterY - characterDelta) <= 0;
-            case Direction.DOWN: return (characterY + characterDelta) >= (screenHeight - tileSize);
-            case Direction.NORTHEAST: return (characterY - characterDeltaDiag) <= 0 || ((characterX + characterDeltaDiag) >= (screenWidth - tileSize));
-            case Direction.NORTHWEST: return (characterY - characterDeltaDiag) <= 0 || (characterX - characterDeltaDiag) <= 0;
-            case Direction.SOUTHEAST: return ((characterY + characterDeltaDiag) >= (screenHeight - tileSize)) || (characterX + characterDeltaDiag) >= (screenWidth - tileSize);
-            case Direction.SOUTHWEST: return ((characterY + characterDeltaDiag) >= (screenHeight - tileSize)) || (characterX - characterDeltaDiag) <= 0;
+            case LEFT: return (characterX - characterDelta) < 0;
+            case RIGHT: return (characterX2 + characterDelta) > (screenWidth - tileSize);
+            case UP: return (characterY - characterDelta) < 0;
+            case DOWN: return (characterY3 + characterDelta) > (screenHeight - tileSize);
+            case NORTHEAST: return (characterY - characterDeltaDiag) < 0 || ((characterX2 + characterDeltaDiag) > (screenWidth - tileSize));
+            case NORTHWEST: return (characterY - characterDeltaDiag) < 0 || (characterX - characterDeltaDiag) < 0;
+            case SOUTHEAST: return ((characterY3 + characterDeltaDiag) > (screenHeight - tileSize)) || (characterX2 + characterDeltaDiag) > (screenWidth - tileSize);
+            case SOUTHWEST: return ((characterY3 + characterDeltaDiag) > (screenHeight - tileSize)) || (characterX - characterDeltaDiag) < 0;
             default: return false;  //  SHOULD NOT HAPPEN
         }
     }

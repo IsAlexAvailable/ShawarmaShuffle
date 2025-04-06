@@ -5,7 +5,7 @@ public class ShawarmaShuffle extends JFrame {
     private GamePanel gamePanel;
     private PausePanel pausePanel;
     private CardLayout cardLayout;
-    private boolean gamePaused;
+    private static boolean gamePaused;
 
     public ShawarmaShuffle() {
         gamePaused = true;
@@ -57,8 +57,8 @@ public class ShawarmaShuffle extends JFrame {
             }
             if (!gamePaused) {
                 gamePanel.update();  //  updates game objects
-                repaint(); //  updates visuals for curr screen
             }
+            repaint(); //  updates visuals for curr screen
             nextInterval = System.nanoTime() + repaintInterval; //  update next interval
         }
     }

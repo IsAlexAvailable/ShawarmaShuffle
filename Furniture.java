@@ -26,29 +26,31 @@ public abstract class Furniture extends Entity {
      */
 
     public boolean hasCollision(Character c) {  //  TODO is this the best logic???
-        int characterX1 = c.getX1() + tileSize/2, characterY1 = c.getY1(), characterY3 = characterY1 + tileSize - 8;
-        Direction characterDirection = c.getDirection();
+        int characterX1 = c.getX1() + tileSize/2, characterY1 = c.getY1();
+        // int characterX2 = c.getX1() + tileSize;
+        int characterY3 = characterY1 + tileSize - 8;
+        MovementState characterDirection = c.getDirection();
         int characterDelta = c.getDelta();
         int characterDeltaDiag = c.getDeltaDiag();
         int obstacleX2 = getX2(), obstacleX1 = getX1(), obstacleY1 = getY1(), obstacleY3 = getY3();
         int futureCharaX1, futureCharaX2, futureCharaY, futureCharaY3;
 
         switch (characterDirection) {
-            case Direction.LEFT:
+            case LEFT:
                 futureCharaX1 = characterX1 - characterDelta - 16;
                 return 
                     ((futureCharaX1 <= obstacleX2) &&
                     (futureCharaX1 >= obstacleX1) &&       // bottom left character corner test
                     (characterY3 >= obstacleY1) &&
                     (characterY3 <= obstacleY3));
-            case Direction.RIGHT:
+            case RIGHT:
                 futureCharaX2 = characterX1 + characterDelta + 16;
                 return
                     ((futureCharaX2 >= obstacleX1) &&     //  bottom right character corner test
                     (futureCharaX2 <= obstacleX2) &&
                     (characterY3 >= obstacleY1) &&
                     (characterY3 <= obstacleY3));
-            case Direction.UP:
+            case UP:
                 futureCharaY = characterY3 - characterDelta;
                 return
                     ((futureCharaY >= obstacleY1) &&
@@ -59,7 +61,7 @@ public abstract class Furniture extends Entity {
                     (characterX1 >= obstacleX1) &&       // bottom right character corner test
                     (futureCharaY <= obstacleY3) &&
                     (futureCharaY >= obstacleY1));
-            case Direction.DOWN:
+            case DOWN:
                 futureCharaY3 = characterY3 + characterDelta;
                 return
                     ((futureCharaY3 <= obstacleY3) &&
@@ -70,7 +72,7 @@ public abstract class Furniture extends Entity {
                     (futureCharaY3 >= obstacleY1) &&      // bottom right character corner test
                     (characterX1 >= obstacleX1) &&
                     (characterX1 <= obstacleX2));
-            case Direction.NORTHWEST:
+            case NORTHWEST:
                 futureCharaX1 = characterX1 - characterDeltaDiag;
                 futureCharaY3 = characterY3 - characterDeltaDiag;
                 return 
@@ -78,7 +80,7 @@ public abstract class Furniture extends Entity {
                     (futureCharaX1 >= obstacleX1) &&       // bottom left character corner test
                     (futureCharaY3 >= obstacleY1) &&
                     (futureCharaY3 <= obstacleY3));
-            case Direction.SOUTHWEST:
+            case SOUTHWEST:
                 futureCharaX1 = characterX1 - characterDeltaDiag;
                 futureCharaY3 = characterY3 + characterDeltaDiag;
                 return 
@@ -86,7 +88,7 @@ public abstract class Furniture extends Entity {
                     (futureCharaX1 >= obstacleX1) &&       // bottom left character corner test
                     (futureCharaY3 >= obstacleY1) &&
                     (futureCharaY3 <= obstacleY3));
-            case Direction.NORTHEAST:
+            case NORTHEAST:
                 futureCharaX2 = characterX1 + characterDeltaDiag;
                 futureCharaY3 = characterY3 - characterDeltaDiag;
                 return
@@ -94,7 +96,7 @@ public abstract class Furniture extends Entity {
                     (futureCharaX2 <= obstacleX2) &&
                     (futureCharaY3 >= obstacleY1) &&
                     (futureCharaY3 <= obstacleY3));
-            case Direction.SOUTHEAST:
+            case SOUTHEAST:
                 futureCharaX2 = characterX1 + characterDeltaDiag;
                 futureCharaY3 = characterY3 + characterDeltaDiag;
                 return

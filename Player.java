@@ -8,14 +8,14 @@ public class Player extends Character {
     private BufferedImage crouch;
     boolean collision;
     protected static BufferedImage playerIdle;
-    private boolean canMove, movingLeft, movingRight, movingUp, movingDown, crouching, typedE, typedQ;
+    private boolean canMove, movingLeft, movingRight, movingUp, movingDown, crouching, tryItemPickUp, tryItemDrop;
 
     public Player() {
         inventory = new Inventory(this);
         initPositionValues();
         initImages();
         currImage = idle;
-        direction = Direction.IDLE;
+        direction = MovementState.IDLE;
         canMove = true;
     }
 
@@ -29,7 +29,7 @@ public class Player extends Character {
     public void initPositionValues() {
         posX1 = (int)(((Constants.MAXCOLUMNS/2)-0.5) * tileSize);  //  player starts at center window
         posY1 = (int)(((Constants.MAXROWS/2)-0.5) * tileSize);
-        deltaPosition = 200 * Constants.SCALE/Constants.FPS;
+        deltaPosition = 200*Constants.SCALE /Constants.FPS;
         deltaPositionDiag = (int) (deltaPosition/Math.sqrt(2));
         radius = tileSize;
         centerX = posX1 + tileSize/2;
@@ -55,16 +55,15 @@ public class Player extends Character {
      */
 
     public void updateDirection() {
-        if      (movingLeft && movingUp)    { direction = Direction.NORTHWEST; }
-        else if (movingLeft && movingDown)  { direction = Direction.SOUTHWEST; }
-        else if (movingRight && movingUp)   { direction = Direction.NORTHEAST; }
-        else if (movingRight && movingDown) { direction = Direction.SOUTHEAST; }
-        else if (movingLeft)                { direction = Direction.LEFT; }
-        else if (movingRight)               { direction = Direction.RIGHT; }
-        else if (movingUp)                  { direction = Direction.UP; }
-        else if (movingDown)                { direction = Direction.DOWN; }
-        else                                { direction = Direction.IDLE; }
-        // if (!canMove) { direction = Direction.IDLE; }
+        if      (canMove && movingLeft && movingUp)    { direction = MovementState.NORTHWEST; }
+        else if (canMove && movingLeft && movingDown)  { direction = MovementState.SOUTHWEST; }
+        else if (canMove && movingRight && movingUp)   { direction = MovementState.NORTHEAST; }
+        else if (canMove && movingRight && movingDown) { direction = MovementState.SOUTHEAST; }
+        else if (canMove && movingLeft)                { direction = MovementState.LEFT; }
+        else if (canMove && movingRight)               { direction = MovementState.RIGHT; }
+        else if (canMove && movingUp)                  { direction = MovementState.UP; }
+        else if (canMove && movingDown)                { direction = MovementState.DOWN; }
+        else                                           { direction = MovementState.IDLE; }
     }
     
     /*
@@ -97,7 +96,7 @@ public class Player extends Character {
 
     @Override
     public void updateInventory() {
-        if (typedE) { 
+        if (tryItemPickUp) { 
             for (Collectable c : GamePanel.collectables) {
                 if (c.hasCollision(this) && !c.inInventory) { 
                     c.inInventory = inventory.addItem(c);
@@ -105,7 +104,7 @@ public class Player extends Character {
                 }
             }
         }
-        if (typedQ) { inventory.dropActiveItem(); }
+        if (tryItemDrop) { inventory.dropActiveItem(); }
     }
 
     /*
@@ -129,44 +128,21 @@ public class Player extends Character {
         } catch (IOException e) {}
     }
 
-    public void setCanMove(boolean b) {
-        // this.canMove = b;
-        if (!b) {
-            setMovingLeft(false);
-            setMovingRight(false);
-            setMovingUp(false);
-            setMovingDown(false);
-        }
+    public void canMove(boolean canMove) {
+        this.canMove = canMove;
     }
 
-    public void setMovingLeft(boolean movingLeft) {
-        this.movingLeft = movingLeft;
-    }
-    public void setMovingRight(boolean movingRight) {
-        this.movingRight = movingRight;
-    }
-    public void setMovingUp(boolean movingUp) {
-        this.movingUp = movingUp;
-    }
-    public void setMovingDown(boolean movingDown) {
-        this.movingDown = movingDown;
-    }
-
-    public void setCrouching(boolean crouching) {
-        this.crouching = crouching;
-    }
-
-    public void setTypedE(boolean isTypedE) {
-        this.typedE = isTypedE;
-    }
-
-    public void setTypedQ(boolean isTypedQ) {
-        this.typedQ = isTypedQ;
+    public void setIdle() {
+        movingLeft = false;
+        movingRight = false;
+        movingDown = false;
+        movingUp = false;
+        crouching = false;
     }
 
     public void resetInteractionKeys() {    //  after typing an interaction key and updating interactions we reset typed so it doesn't act as pressed
-        typedE = false;
-        typedQ = false;
+        tryItemPickUp = false;
+        tryItemDrop = false;
     }
 
     PlayerKeyListener keyListener = new PlayerKeyListener();
@@ -193,24 +169,24 @@ public class Player extends Character {
 
             if (keyCode == KeyEvent.VK_LEFT || keyChar == 'a') { 
                 isLeftPressed = true;
-                setMovingLeft(isLeftPressed);
+                movingLeft = isLeftPressed;
             }
             if (keyCode == KeyEvent.VK_RIGHT || keyChar == 'd') { 
                 isRightPressed = true;
-                setMovingRight(isRightPressed);
+                movingRight = isRightPressed;
             }
             if (keyCode == KeyEvent.VK_UP || keyChar == 'w') { 
                 isUpPressed = true;
-                setMovingUp(isUpPressed);
+                movingUp = isUpPressed;
             }
             if (keyCode == KeyEvent.VK_DOWN || keyChar == 's') { 
                 isDownPressed = true;
-                setMovingDown(isDownPressed);
+                movingDown = isDownPressed;
             }
             if (keyCode == KeyEvent.VK_SHIFT) {
                 isShiftPressed = true;
-                setCrouching(isShiftPressed);
-                setCanMove(false);
+                crouching = isShiftPressed;
+                canMove(!crouching);
             }
         }
     
@@ -225,32 +201,32 @@ public class Player extends Character {
     
             if (keyCode == KeyEvent.VK_LEFT || keyChar == 'a') { 
                 isLeftPressed = false;
-                setMovingLeft(isLeftPressed);
+                movingLeft = isLeftPressed;
             }
             if (keyCode == KeyEvent.VK_RIGHT || keyChar == 'd') { 
                 isRightPressed = false;
-                setMovingRight(isRightPressed); 
+                movingRight = isRightPressed;
             }
             if (keyCode == KeyEvent.VK_UP || keyChar == 'w') { 
                 isUpPressed = false;
-                setMovingUp(isUpPressed); 
+                movingUp = isUpPressed;
             }
             if (keyCode == KeyEvent.VK_DOWN || keyChar == 's') { 
                 isDownPressed = false;
-                setMovingDown(isDownPressed);
+                movingDown = isDownPressed;
             }
             if (keyCode == KeyEvent.VK_SHIFT) { 
                 isShiftPressed = false;
-                setCrouching(isShiftPressed);
-                setCanMove(true);
+                crouching = isShiftPressed;
+                canMove(!crouching);
             }
             if (keyChar == 'e') { 
                 isTypedE = false;
-                setTypedE(isTypedE);
+                tryItemPickUp = isTypedE;
             }
             if (keyChar == 'q') { 
                 isTypedQ = false;
-                setTypedQ(isTypedQ);
+                tryItemDrop = isTypedQ;
             }
         }
     
@@ -263,11 +239,11 @@ public class Player extends Character {
             switch (e.getKeyChar()) {
                 case 'e': 
                     isTypedE = true; 
-                    setTypedE(isTypedE);
+                    tryItemPickUp = isTypedE;
                     break;
                 case 'q': 
                     isTypedQ = true; 
-                    setTypedQ(isTypedQ);
+                    tryItemDrop = isTypedQ;
                     break;
             }
         }
@@ -285,6 +261,6 @@ public class Player extends Character {
      @Override   public int getY3() { return posY1 + tileSize; }
      @Override   public int getCenterX() { return centerX; }
      @Override   public int getCenterY() { return centerY; }
-     @Override   public Direction getDirection() { return direction; }
+     @Override   public MovementState getDirection() { return direction; }
      @Override   public int getRadius() { return radius; }
 }

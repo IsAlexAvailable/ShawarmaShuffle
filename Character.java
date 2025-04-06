@@ -1,3 +1,4 @@
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 
@@ -5,7 +6,7 @@ public abstract class Character extends Entity {
     protected BufferedImage idle, crouch, leftA, leftB, rightA, rightB, upA, upB, downA, downB, currImage;
     protected Inventory inventory;
     protected int deltaPosition, deltaPositionDiag, radius, centerX, centerY;
-    protected Direction direction;
+    protected MovementState direction;
 
     private long timeElapsed = 0, startTime = 0, period = 500, lowTime = period/2;
     public static final int CLOCK_LOW = 1, CLOCK_HIGH = 2, CLOCK_IDLE = -1;
@@ -33,14 +34,14 @@ public abstract class Character extends Entity {
 
     public void updatePosition() {
         switch (direction) {
-            case Direction.NORTHWEST: posX1 -= deltaPositionDiag; posY1 -= deltaPositionDiag; break;
-            case Direction.SOUTHWEST: posX1 -= deltaPositionDiag; posY1 += deltaPositionDiag; break;
-            case Direction.NORTHEAST: posX1 += deltaPositionDiag; posY1 -= deltaPositionDiag; break;
-            case Direction.SOUTHEAST: posX1 += deltaPositionDiag; posY1 += deltaPositionDiag; break;
-            case Direction.LEFT: posX1 -= deltaPosition; break;
-            case Direction.RIGHT: posX1 += deltaPosition; break;
-            case Direction.UP: posY1 -= deltaPosition; break;
-            case Direction.DOWN: posY1 += deltaPosition; break;
+            case NORTHWEST: posX1 -= deltaPositionDiag; posY1 -= deltaPositionDiag; break;
+            case SOUTHWEST: posX1 -= deltaPositionDiag; posY1 += deltaPositionDiag; break;
+            case NORTHEAST: posX1 += deltaPositionDiag; posY1 -= deltaPositionDiag; break;
+            case SOUTHEAST: posX1 += deltaPositionDiag; posY1 += deltaPositionDiag; break;
+            case LEFT: posX1 -= deltaPosition; break;
+            case RIGHT: posX1 += deltaPosition; break;
+            case UP: posY1 -= deltaPosition; break;
+            case DOWN: posY1 += deltaPosition; break;
             default: break; //  CHARACTER IS IDLE SO NO CHANGE
         }
         centerX = getX1() + tileSize/2;
@@ -54,11 +55,11 @@ public abstract class Character extends Entity {
 
     public void updateImage() {
         switch (direction) {
-            case Direction.IDLE -> { currImage = idle; break; }
-            case Direction.RIGHT -> { pickBetweenImages(rightA, rightB); break; }
-            case Direction.LEFT -> { pickBetweenImages(leftA, leftB); break; }
-            case Direction.UP, Direction.NORTHEAST, Direction.NORTHWEST -> { pickBetweenImages(upA, upB); break; }
-            case Direction.DOWN, Direction.SOUTHEAST, Direction.SOUTHWEST -> { pickBetweenImages(downA, downB); break; }
+            case IDLE -> { currImage = idle; break; }
+            case RIGHT -> { pickBetweenImages(rightA, rightB); break; }
+            case LEFT -> { pickBetweenImages(leftA, leftB); break; }
+            case UP, NORTHEAST, NORTHWEST -> { pickBetweenImages(upA, upB); break; }
+            case DOWN, SOUTHEAST, SOUTHWEST -> { pickBetweenImages(downA, downB); break; }
             default -> { break; }   //  SHOULD NOT HAPPEN
         }
     }
@@ -93,13 +94,17 @@ public abstract class Character extends Entity {
      */
 
     @Override
-    public void draw(Graphics g) { g.drawImage(currImage, posX1, posY1, tileSize, tileSize, null); }
+    public void draw(Graphics g) { 
+        g.drawImage(currImage, posX1, posY1, tileSize, tileSize, null);
+        g.setColor(Color.RED);  //  tilebox
+        g.drawRect(posX1+16, posY1+32, tileSize-32, tileSize-32);
+    }
 
     public abstract int getCenterX();
     public abstract int getCenterY();
     public abstract int getDelta();
     public abstract int getDeltaDiag();
-    public abstract Direction getDirection();
+    public abstract MovementState getDirection();
     public abstract Inventory getInventory();
     public abstract int getRadius();
     public abstract void update();

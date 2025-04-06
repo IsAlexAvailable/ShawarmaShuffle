@@ -59,7 +59,7 @@ public class GamePanel extends JPanel {
         this.addKeyListener(new KeyAdapter() {
             public void keyPressed(java.awt.event.KeyEvent e) {
                 if (e.getKeyCode() == KeyEvent.VK_ESCAPE) { 
-                    player1.setCanMove(false);
+                    player1.setIdle();
                     game.pauseGame();
                 }
             }
@@ -114,10 +114,10 @@ public class GamePanel extends JPanel {
             boolean isClickedOnce = false;
             @Override
             public void actionPerformed(ActionEvent e) {
+                player1.setIdle();
                 GamePanel.this.requestFocusInWindow();  //  immediately returns focus to the game panel
                 if (isClickedOnce) {isClickedOnce = false; shouldDrawInfoBox = false; }
                 else if (!isClickedOnce) { isClickedOnce = true; shouldDrawInfoBox = true; }
-                player1.setCanMove(false);
             }
         });
     }
