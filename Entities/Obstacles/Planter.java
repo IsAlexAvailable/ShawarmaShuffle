@@ -1,3 +1,5 @@
+package Entities.Obstacles;
+
 public abstract class Planter extends Furniture {
     protected int posX2, posY2;
     

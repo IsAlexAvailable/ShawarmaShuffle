@@ -1,3 +1,5 @@
+package GameControl;
+
 public class GlobalSettings {
     private static GlobalSettings instance = null;
 

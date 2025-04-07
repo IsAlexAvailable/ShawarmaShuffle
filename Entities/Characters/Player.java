@@ -1,13 +1,18 @@
-import java.awt.Graphics;
+package Entities.Characters;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import javax.imageio.ImageIO;
+import Entities.Hitbox;
+import Entities.Inventory;
+import Entities.Items.Collectable;
+import GameControl.Constants;
+import GameControl.GamePanel;
 
 public class Player extends Character {
     private BufferedImage crouch;
-    boolean hasCollision;
+    private boolean hasCollision;
     protected static BufferedImage playerIdle;
     private boolean canMove, movingLeft, movingRight, movingUp, movingDown, isCrouching, tryItemPickUp, tryItemDrop;
 
@@ -30,7 +35,7 @@ public class Player extends Character {
     public void initPositionValues() {
         posX1 = (int)(((Constants.MAXCOLUMNS/2)-0.5) * tileSize);  //  player starts at center window
         posY1 = (int)(((Constants.MAXROWS/2)-0.5) * tileSize);
-        deltaPosition = 200*Constants.SCALE /Constants.FPS;
+        deltaPosition = 120*Constants.SCALE /Constants.FPS;
         deltaPositionDiag = (int) (deltaPosition/Math.sqrt(2));
         radius = tileSize;
         centerX = posX1 + tileSize/2;
@@ -98,10 +103,12 @@ public class Player extends Character {
      */
     @Override
     public void updateInventory() {
+        boolean addToInventory;
         if (tryItemPickUp) { 
-            for (Collectable c : GamePanel.collectables) {
-                if (c.hasCollision(this) && !c.inInventory) { 
-                    c.inInventory = inventory.addItem(c);
+            for (Collectable c : GamePanel.getCollectables()) {
+                if (c.hasCollision(this) && !c.isInInventory()) { 
+                    addToInventory = inventory.addItem(c);
+                    c.setInInventory(addToInventory); 
                     break;
                 }
             }
@@ -250,6 +257,7 @@ public class Player extends Character {
      /*
      *  various getter methods mainly used by other classes to operate based on player positioning or modify inventory
      */
+    public static BufferedImage getPlayerIdleImage() { return playerIdle; }
      @Override   public Inventory getInventory() { return inventory; }
      @Override   public int getDelta() { return deltaPosition; }
      @Override   public int getDeltaDiag() { return deltaPositionDiag; }

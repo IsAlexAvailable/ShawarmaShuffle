@@ -1,7 +1,9 @@
+package Entities.Obstacles;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import javax.imageio.ImageIO;
+import Entities.Hitbox;
 
 public class RectangleTable extends Table {
     private BufferedImage rectangleTableA, rectangleTableB;
@@ -13,7 +15,7 @@ public class RectangleTable extends Table {
         height = tileSize;
         posX2 = posX1 + width;
         posY2 = posY1 + height;
-        hitbox = new Hitbox(posX1, posY1, 8, 8, width-12, height-8);
+        hitbox = new Hitbox(posX1, posY1, 8, 20, width-12, height-20);
         initImages();
     }
 

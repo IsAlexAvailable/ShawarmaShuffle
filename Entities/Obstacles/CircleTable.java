@@ -1,7 +1,9 @@
+package Entities.Obstacles;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import javax.imageio.ImageIO;
+import Entities.Hitbox;
 
 public class CircleTable extends Table {
     private BufferedImage circleTable;
@@ -13,7 +15,7 @@ public class CircleTable extends Table {
         height = tileSize;
         posX2 = posX1 + width;
         posY2 = posY1 + height;
-        hitbox = new Hitbox(posX1, posY1, 0, 8, width, height-8);
+        hitbox = new Hitbox(posX1, posY1, 0, 24, width, height-24);
         initImages();
     }
 

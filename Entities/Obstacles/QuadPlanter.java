@@ -1,7 +1,9 @@
+package Entities.Obstacles;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import javax.imageio.ImageIO;
+import Entities.Hitbox;
 
 public class QuadPlanter extends Planter {
     private BufferedImage plantA, plantB, plantC, plantD, plantE, plantF;

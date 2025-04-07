@@ -1,3 +1,4 @@
+package Entities;
 import java.util.Comparator;
 
 public class EntityComparator implements Comparator<Entity> {

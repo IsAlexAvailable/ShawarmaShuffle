@@ -1,5 +1,8 @@
+package Entities.Items;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
+import Entities.Entity;
+import Entities.Characters.Character;
 
 public abstract class Collectable extends Entity {
     protected int centerX, centerY, radius, width = tileSize/2, height = tileSize/2;
@@ -73,6 +76,10 @@ public abstract class Collectable extends Entity {
 
     @Override
     public int getY2() { return posY1 + height; }
+
+    public boolean isInInventory() {
+        return inInventory;
+    }
 
     public void setInInventory(boolean b) { inInventory = b; }
 }

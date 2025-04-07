@@ -1,3 +1,4 @@
+package GameControl;
 import java.awt.CardLayout;
 import javax.swing.JFrame;
 
@@ -6,7 +7,6 @@ public class ShawarmaShuffle extends JFrame {
     private PausePanel pausePanel;
     private CardLayout cardLayout;
     private boolean gamePaused;
-    private boolean showHitboxes = false;
 
     public ShawarmaShuffle() {
         gamePaused = true;
@@ -28,6 +28,7 @@ public class ShawarmaShuffle extends JFrame {
         getContentPane().add(gamePanel, Constants.CARD_MAIN_GAME);
         setLayout(cardLayout);
         
+        setTitle("Shawarma Shuffle");
         setResizable(false);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         pack();
@@ -76,7 +77,7 @@ public class ShawarmaShuffle extends JFrame {
 
     public static void main(String[] args) {
         ShawarmaShuffle game = new ShawarmaShuffle();
-        GlobalSettings.getInstance().setShowHitboxes(false);
+        GlobalSettings.getInstance().setShowHitboxes(false);    //  hitbox display switch
         game.runGameLoop();
     }
 }

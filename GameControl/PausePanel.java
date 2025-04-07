@@ -1,9 +1,11 @@
+package GameControl;
 import javax.imageio.ImageIO;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import Entities.Characters.Player;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
@@ -12,11 +14,8 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 
 public class PausePanel extends JPanel {
-    private JButton playButton;
-    private JButton exitButton;
-    private BufferedImage playButtonImage;
-    private BufferedImage exitButtonImage;
-    private BufferedImage continueButtonImage;
+    private JButton playButton, exitButton;
+    private BufferedImage playButtonImage, exitButtonImage, continueButtonImage;
     private ShawarmaShuffle game;
 
     private boolean isFirstScreen = true;
@@ -69,7 +68,16 @@ public class PausePanel extends JPanel {
             @Override
             public void actionPerformed(ActionEvent e) { 
                 String[] options = {"Yes", "No"};
-                int choice = JOptionPane.showOptionDialog(PausePanel.this, "Are you sure you want to quit?", "Quit game", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, new ImageIcon(Player.playerIdle), options, options[1] );
+                int choice = JOptionPane.showOptionDialog(
+                    PausePanel.this, 
+                    "Are you sure you want to quit?",
+                    "Quit game",
+                    JOptionPane.YES_NO_OPTION,
+                    JOptionPane.QUESTION_MESSAGE,
+                    new ImageIcon(Player.getPlayerIdleImage()),
+                    options,
+                    options[1] 
+                );
                 if (choice == 0) { System.exit(0); }
             }
         });

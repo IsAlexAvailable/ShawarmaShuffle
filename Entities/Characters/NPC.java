@@ -1,5 +1,9 @@
+package Entities.Characters;
 import java.io.IOException;
 import javax.imageio.ImageIO;
+import Entities.Hitbox;
+import Entities.Inventory;
+import GameControl.Constants;
 import java.util.Random;
 
 public class NPC extends Character {
@@ -37,7 +41,6 @@ public class NPC extends Character {
      */
     @Override
     public void update() {
-        // updateDirection();
         updateImage();
         updatePosition();
         updateHitbox();
@@ -53,30 +56,20 @@ public class NPC extends Character {
     public void updatePosition() {
         collision = testObstacleCollisions();
         if (collision) {
-            if (direction == MovementState.DOWN || direction == MovementState.UP) { updateDirection(0, 2); }
-            else if (direction == MovementState.LEFT || direction == MovementState.RIGHT) { updateDirection(2, 4); }
-            else { updateDirection(0, 9); }
+            if (direction == MovementState.DOWN || direction == MovementState.UP) { updateDirection(0, 3); }
+            else if (direction == MovementState.LEFT || direction == MovementState.RIGHT) { updateDirection(3, 6); }
+            else { updateDirection(0, 6); }
         }
         else {
-            if (shouldChangeDirection()) { updateDirection(0, 9); }
             super.updatePosition();
+            if (shouldChangeDirection()) { updateDirection(0, 10); }
         }
-        // if (!collision) { super.updatePosition(); }
-        // else {
-        //     if (direction == Direction.DOWN || direction == Direction.UP) { updateDirection(0, 2); }
-        //     else if (direction == Direction.LEFT || direction == Direction.RIGHT) { updateDirection(2, 4); }
-        //     else { updateDirection(0, 5); }
-        // }
     }
 
     @Override
     public void updateHitbox() {
         hitbox.updatePosition(posX1, posY1);
     }
-
-    // public void updateDirection() {
-    //     if (shouldChangeDirection()) { updateDirection(0, 9); }
-    // }
 
     /*
      *  NPC's direction is updated and constrained to the index of range specified by parameters.

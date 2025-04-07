@@ -1,5 +1,6 @@
+package GameControl;
+
 public interface Constants {
-    //  CONSTANTS
     public static final int TILESIZE = 32;    //  num pixels in a tile
     public static final int SCALE = 2;    //  tile scale
     public static final int SCALEDTILESIZE = TILESIZE * SCALE;  //  working tile size with scale

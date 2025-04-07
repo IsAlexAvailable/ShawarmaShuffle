@@ -1,7 +1,12 @@
+package Entities.Obstacles;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import javax.imageio.ImageIO;
+import Entities.Entity;
+import Entities.Characters.Character;
+import Entities.Characters.MovementState;
+import GameControl.Constants;
 
 public class GameBackground extends Entity {
     private BufferedImage[][] tileArray;
@@ -63,5 +68,5 @@ public class GameBackground extends Entity {
     }
 
     @Override
-    public int getY2(){ return -50; }
+    public int getY2(){ return -50; }   //  arbitrary out of bounds y to indicate lowest position in entities order
 }

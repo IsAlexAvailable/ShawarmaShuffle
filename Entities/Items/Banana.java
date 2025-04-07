@@ -1,6 +1,8 @@
+package Entities.Items;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import javax.imageio.ImageIO;
+import Entities.Characters.Character;
 
 public class Banana extends Collectable {
     public static final int health = 10;

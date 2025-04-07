@@ -1,6 +1,12 @@
+package Entities.Characters;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
+import Entities.Entity;
+import Entities.Hitbox;
+import Entities.Inventory;
+import GameControl.GamePanel;
+import GameControl.GlobalSettings;
 
 public abstract class Character extends Entity {
     protected BufferedImage idle, crouch, leftA, leftB, rightA, rightB, upA, upB, downA, downB, currImage;
@@ -80,7 +86,7 @@ public abstract class Character extends Entity {
      *  @return if a collision occurs
      */
     public boolean testObstacleCollisions() {
-        for (Entity e : GamePanel.obstacles) { 
+        for (Entity e : GamePanel.getObstacles()) { 
             if (e.hasCollision(this)) { return true; } 
         }
         return false;

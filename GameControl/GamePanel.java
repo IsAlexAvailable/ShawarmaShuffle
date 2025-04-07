@@ -1,7 +1,21 @@
+package GameControl;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JPanel;
+import Entities.Entity;
+import Entities.EntityComparator;
+import Entities.Characters.Character;
+import Entities.Characters.NPC;
+import Entities.Characters.Player;
+import Entities.Items.Banana;
+import Entities.Items.Collectable;
+import Entities.Items.Shawarma;
+import Entities.Obstacles.CircleTable;
+import Entities.Obstacles.GameBackground;
+import Entities.Obstacles.QuadPlanter;
+import Entities.Obstacles.RectangleTable;
+import Entities.Obstacles.SinglePlanter;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
@@ -21,8 +35,8 @@ public class GamePanel extends JPanel {
 
     //  CHARACTERS
     private Player player1 = new Player();
-    private NPC npc1 = new NPC(50, 50, 80), npc2 = new NPC(450, 500, 90);
-    private NPC npc3 = new NPC(100, 250, 100), npc4 = new NPC(830, 400, 100);
+    private NPC npc1 = new NPC(50, 50, 70), npc2 = new NPC(450, 500, 90);
+    private NPC npc3 = new NPC(100, 250, 80), npc4 = new NPC(830, 400, 60);
 
     //  OBSTACLES
     private GameBackground background = new GameBackground();
@@ -204,5 +218,13 @@ public class GamePanel extends JPanel {
             infoButtonImage = ImageIO.read(getClass().getResourceAsStream("/sprites/info_button.png"));
             controlsImage = ImageIO.read(getClass().getResourceAsStream("/sprites/controls.png"));
         } catch (IOException e) {};
+    }
+
+    public static Collection<Entity> getObstacles() {
+        return obstacles;
+    }
+
+    public static Collection<Collectable> getCollectables() {
+        return collectables;
     }
 }
